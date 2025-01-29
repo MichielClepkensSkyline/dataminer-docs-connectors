@@ -37,6 +37,10 @@ If the action to read both databases and process their content takes 14 minutes,
 
 The element will indicate a timeout if both main and backup databases are not accessible. The **General Overview** table is cleared if the element indicates a timeout.
 
+### Force Retrieval Page
+
+Using the **Force Retrieval** parameter the element can be configured to take into account the main or the backup database only. Disabling this paramter instructs the element to take both main and backup into account. The Force Retrieval action can be activated for a given duration.
+
 ### Configuration Page
 
 A manual database read can be triggered from here as well as a manual alarm template sync.
