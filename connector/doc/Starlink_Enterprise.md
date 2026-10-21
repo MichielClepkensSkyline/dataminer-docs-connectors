@@ -31,9 +31,11 @@ The Starlink Enterprise connector was previously known as the Starlink Telemetry
 
 - **User terminal details**: View details on user terminals and service lines.
 
-- **Data usage**: Review and monitor your data usage per month or day by type of data consumed (fixed or mobile, priority or standard). Additional services or data consumed beyond the limit is also shown.
+- **Alert monitoring**: Web interface alerts are visible in the DataMiner Alarm Console.
 
-- **Simulation mode**: Replicate real-world scenarios using a simulation extension with built-in logic based on mock accounts and user terminals.
+- **Data usage details**: Review and monitor your data usage per month or day by type of data consumed. Additional services or data consumed beyond the limit is also shown.
+
+- **Demo mode**: Replicate real-world scenarios using a simulation extension with built-in logic based on mock accounts and user terminals.
 
 - **Dynamic virtual elements**: Use separate child elements (DVEs) to represent the different user terminals or service groups, allowing you to view and monitor their data separately. The DVEs will get created automatically using the following connectors, which are exported by this connector:
 
@@ -93,14 +95,6 @@ The Starlink Enterprise connector was previously known as the Starlink Telemetry
 **Solution**: Unexpected telemetry column names and alerts will be logged in the element log file.
 
 **Benefit**: The element will indicate by itself when the connector needs to be extended.
-
-### Alerts
-
-**Challenge**: Monitoring based on alerts.
-
-**Solution**: The connector shows each alert from a user terminal or from a router. Alerts will persist for as long as they are active.
-
-**Benefit**: Web interface alerts are visible in the DataMiner Alarm Console.
 
 ### Service Line Top-Up
 

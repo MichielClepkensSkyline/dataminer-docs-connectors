@@ -29,6 +29,6 @@ All telemetry data can be found on the General page.
 
 ### Alerts Page
 
-Each row in the **Alerts** table represents an alert from a user terminal (not from a router). Alerts will persist for as long as they are active.
+Each row in the **Alerts** table represents an alert that comes from a user terminal or from a router. Alerts will persist for as long as they are active.
 
-The **User Terminal Device ID** column in this table is hidden by default. You can show it by right-clicking the table column header, selecting **Columns**, and then selecting this column.
+The columns **User Terminal Device ID**, **Router Device ID**, and **Alert Kit Number** in the Alerts table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.

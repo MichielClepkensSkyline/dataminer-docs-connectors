@@ -39,7 +39,7 @@ If changing one of the parameters does not seem to work (like topping up a servi
 
 Upon element creation, the **Demo Mode** of the element is enabled by default. This means that a simulation becomes active that utilizes built-in logic based on mock accounts and user terminals to replicate real-world scenarios. Service Group DVEs are generated per account, and history simulation data is loaded for the demo terminal "Skyline demo cruise_UT*74d101" to allow location tracking.
 
-The simulation will run until you enter the Client ID and Client Secret on the **Configuration** page of one or more **Starlink Enterprise Account** elements. After that, Demo Mode gets disabled, which stops the simulation. At this point, the Starlink Enterprise Account elements start polling real data.
+The simulation will run until you enter the **Client ID** and **Client Secret** on the **Configuration** page of one or more **Starlink Enterprise Account** elements. After that, Demo Mode gets disabled, which stops the simulation. At this point, the Starlink Enterprise Account elements start polling real data.
 
 ## How to Use
 
@@ -57,11 +57,7 @@ In case the element **does not show any data**, and traffic inside the element l
 
 The User Terminals page contains the **User Terminals** table. This table shows the Starlink terminals that are linked to the accounts for which a Starlink Enterprise Account element is actively querying the Starlink API. Telemetry is polled every minute and stored using history sets for accurate backpolling.
 
-#### Terminal Data and Retention
-
-To ensure data continuity, if a terminal is no longer present in the API response, it remains in the table for the duration specified by the **Terminal Retention Period** parameter. The **Timestamp** column is used to determine the latest timestamp of when a row was updated.
-
-If the **Timestamp** column for a user terminal shows **N/A**, it was returned by the Management API and not by the Telemetry API. This means no telemetry (Signal Quality, Downlink Throughput, etc.) can be shown for it.
+If the **Uptime** column for a user terminal shows **Offline**, it was returned by the Management API and not by the Telemetry API. This means no telemetry (Signal Quality, Downlink Throughput, etc.) can be shown for it.
 
 #### Device Name
 
@@ -81,9 +77,9 @@ The longitude is calculated based on the H3 cell that is returned by the API (H3
 
 You can reboot a user terminal by clicking the **Reboot** button.
 
-You can verify the reboot on the appropriate Starlink Enterprise Account element by checking if the **Uptime** value resets to zero; however, note that this will only be reflected after the next polling cycle.
+You can verify the reboot by checking if the **Uptime** column resets to zero. However, note that this will only be reflected after the next polling cycle.
 
-#### Hidden Columns
+#### Hidden/Empty Columns
 
 The columns **User Terminal Device ID**, **Account Number**, **Service Line Number**, **State**, **User Terminal DVE ID**, and **Service Group DVE ID** in the User Terminals table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
 
@@ -103,18 +99,18 @@ User terminals can be converted to dynamic virtual elements (DVEs). To **generat
 To **remove a DVE**:
 
 1. Make sure that the **DVE Creation** toggle button for the corresponding terminal is set to *Disabled* in the **User Terminals** table.
-1. Navigate to the **User Terminal DVEs Configuration** page via the page button on the **Configuration** page or by clicking the downwards arrow next to Configuration.
+1. Navigate to the **User Terminal DVEs Configurations** page via the page button on the **Configuration** page or by clicking the downwards arrow next to Configuration.
 1. Click the **Delete** button for the corresponding terminal.
 1. Read the warning message carefully.
 1. If you are sure that the DVE can be removed, click **Yes** to confirm.
 
-User terminal DVEs can only be removed if the DVE Creation column contains a value other than *Enabled*. User terminals for which a dynamic virtual element was created will not be removed automatically if they are no longer returned by the API for more than one day and have DVE Creation set to *Enabled*.
+User terminal DVEs can only be removed if the DVE Creation column contains a value other than *Enabled*. User terminals for which a dynamic virtual element was created will not be removed automatically if they are no longer returned by the API for more than the defined Terminal Retention Period and have DVE Creation set to *Enabled*.
 
 ![Disable User Terminal DVE](~/connector/images/StarlinkEnterpriseDisableUserTerminalDve.png)
 
 ![Delete User Terminal DVE](~/connector/images/StarlinkEnterpriseDeleteUserTerminalDve.png)
 
-### Service Line Statistics
+### Service Line Statistics Page
 
 Each row in the **Service Line Statistics** table represents aggregated KPI data for the terminals that belong to that service line.
 
@@ -128,11 +124,9 @@ The columns **User Terminal Device ID**, **Router Device ID**, and **Alert Kit N
 
 Information related to routers is stored in the **Routers** table.
 
-The **Account Number** column in the Routers table is hidden by default. You can show it by right-clicking the table column header, selecting **Columns**, and then selecting this column.
+The **Account Number** column in the Routers table is hidden by default. You can show it by right-clicking the table column header, selecting **Columns**, and then selecting this column. 
 
-The Telemetry API provides the current routers. If a router is removed or no longer present in the API response, the connector will retain it in the table for up to one day to ensure data continuity. When the **Info Logging Level** of the element log file is raised to *Level 1* or higher, you will see a line in the log file when one or more routers are still in the table but were not returned by the API.
-
-Routers that are no longer returned by the API for more than one day will be removed from the table. This action can also be logged in the element log file. The **Timestamp** column is used to determine the latest timestamp of when a row was updated.
+When the **Info Logging Level** of the element log file is raised to *Level 1* or higher, you will see a line in the log file when one or more routers are still in the table but were not returned by the API.
 
 ### IP Allocations Page
 
@@ -156,7 +150,7 @@ Selecting the **Unassign** group name unassigns the service and all linked user 
 
 #### Service Group Mode
 
-If the **Service Group Mode** parameter, located on the **Configuration** page, is set to *Account Groups*, it is not possible to unassign services or to re-assign services to a different service group. It is also not possible to use the Service Group DVEs table **Delete** column to delete a service group.
+If the **Service Group Mode** parameter, located on the [Configuration page](#configuration-page), is set to *Account Groups*, it is not possible to unassign services or to re-assign services to a different service group. It is also not possible to use the Service Group DVEs table **Delete** column to delete a service group.
 
 Switching the Service Group Mode to *Custom Groups* allows unassigning services, re-assigning services to a different service group and deleting service groups.
 
@@ -176,7 +170,7 @@ If you need to purchase additional data beyond the included monthly allocation, 
 
 To do so, specify the number of data blocks you want to top up for a specific account in the **Data Blocks to Add** column of the Services table, and then click the **Top Up** button in the row. This will execute a one-time top-up request via the Starlink Management API. The connector will validate the product availability and confirm whether the top-up succeeded or failed.
 
-Because the Starlink Enterprise element relies on a Starlink Enterprise Account element to send the Opt In/Out request to the Starlink API, it may take a minute or two for the **Automatic Top Up** toggle button to update after it is used. This is due to the [buffer mechanism](#initialization) that was added to allow inter-element communication. Please keep these background actions in mind when toggling that button.
+Because the Starlink Enterprise element relies on a Starlink Enterprise Account element to send the Opt In/Out request to the Starlink API, it may take a minute or two for the **Automatic Top Up** toggle button to update after it is used. This is due to the [buffer mechanism](#inter-element-communication) that was added to allow inter-element communication. Please keep these background actions in mind when toggling that button.
 
 ![Automatic Top Up](~/connector/images/StarlinkEnterpriseAutomaticTopUp.png)
 
@@ -190,17 +184,15 @@ The **Service Line Number** column in the Overage Lines table is hidden by defau
 
 ### Monthly Data Usage Page
 
-On this page, you can review and monitor your data usage per month by type of data consumed (*Fixed* or *Mobile*, *Priority* or *Standard*).
+On this page, you can review and monitor your data usage per month by type of data consumed.
 
-The columns **Priority Data**, **Standard Data**, and **Service Line Number** in the **Monthly Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
-
-The data in the Monthly Data Usage table is retained for 12 months.
+The columns **Priority Data**, **Standard Data** and **Service Line Number** in the **Monthly Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
 
 ### Daily Data Usage Page
 
-On this page, you can review and monitor your data usage per day by type of data consumed (*Fixed* or *Mobile*, *Priority* or *Standard*).
+On this page, you can review and monitor your data usage per day by type of data consumed.
 
-The columns **Priority Data**, **Standard Data**, and **Service Line Number** in the **Daily Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
+The columns **Priority Data**, **Standard Data** and **Service Line Number** in the **Daily Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
 
 ### Accounts Page
 
@@ -217,7 +209,7 @@ In *Account Groups* mode, it is not possible to use the Services table **Group N
 
 Switching the **Service Group Mode** parameter to *Custom Groups* mode does not group the services and linked user terminals. This mode allows the unassigning of services, the re-assigning of services to a different service group, and the deleting of service groups.
 
-### User Terminal DVEs Configuration Page
+### User Terminal DVEs Configurations Page
 
 Every row in the **User Terminal DVEs** table represents a DVE.
 
@@ -229,7 +221,7 @@ Removing a DVE is only possibly via the **Delete** button in the **User Terminal
 
 ![Enable User Terminal DVE](~/connector/images/StarlinkEnterpriseEnableUserTerminalDve.png)
 
-### Service Group DVEs Configuration Page
+### Service Group DVEs Configurations Page
 
 Every row in the **Service Group DVEs** table represents a DVE.
 
@@ -243,6 +235,8 @@ Deleting a service group is only possible if the **Service Group Mode** paramete
 
 ### Table Cleanup Mechanism
 
-The table cleanup mechanism can be triggered per table.
+Every table, except for the Alert table, has a **Retention Period** parameter. To ensure data continuity, if a row is no longer present in the API response, it remains in the table for the duration specified by the Retention Period parameter. The **Timestamp** column is used to determine the latest timestamp of when a row was updated.
+
+The cleanup mechanism can be triggered per table on the corresponding page.
 
 ![Manual Table Cleanup Mechanism](~/connector/images/StarlinkEnterpriseManualTableCleanupMechanism.png)

@@ -27,11 +27,7 @@ This connector cannot be used to create a standalone element. You need to create
 
 The User Terminals page contains the **User Terminals** table. This table shows the Starlink terminals that are linked to the accounts for which a Starlink Enterprise Account element is actively querying the Starlink API. Telemetry is polled every minute and stored using history sets for accurate backpolling.
 
-#### Terminal Data and Retention
-
-To ensure data continuity, if a terminal is no longer present in the API response, it remains in the table for the duration specified by the **Terminal Retention Period** parameter. The **Timestamp** column is used to determine the latest timestamp of when a row was updated.
-
-If the **Timestamp** column for a user terminal shows **N/A**, it was returned by the Management API and not by the Telemetry API. This means no telemetry (Signal Quality, Downlink Throughput, etc.) can be shown for it.
+If the **Uptime** column for a user terminal shows **Offline**, it was returned by the Management API and not by the Telemetry API. This means no telemetry (Signal Quality, Downlink Throughput, etc.) can be shown for it.
 
 #### Device Name
 
@@ -47,7 +43,13 @@ The **Latitude** and **Longitude** combination represents a coordinate near the 
 
 The longitude is calculated based on the H3 cell that is returned by the API (H3 geospatial indexing system). This H3 cell ID represents the center point of a hexagonal area, not the exact coordinates of a specific location within that area. If the exact location of the terminal is somewhere else within the hexagon, the latitude and longitude will differ.
 
-#### Hidden Columns
+#### User Terminal Reboot
+
+You can reboot a user terminal by clicking the **Reboot** button.
+
+You can verify the reboot by checking if the **Uptime** column resets to zero. However, note that this will only be reflected after the next polling cycle.
+
+#### Hidden/Empty Columns
 
 The columns **User Terminal Device ID**, **Account Number**, **Service Line Number**, **State**, **User Terminal DVE ID**, and **Service Group DVE ID** in the User Terminals table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
 
@@ -60,7 +62,7 @@ When the **Info Logging Level** of the element log file is raised to *Level 1* o
 - When one or more terminals are still in the User Terminals table but were not returned by the API.
 - When no terminals are assigned to a specific account.
 
-### Service Line Statistics
+### Service Line Statistics Page
 
 Each row in the **Service Line Statistics** table represents aggregated KPI data for the terminals that belong to that service line.
 
@@ -76,9 +78,7 @@ Information related to routers is stored in the **Routers** table.
 
 The **Account Number** column in the Routers table is hidden by default. You can show it by right-clicking the table column header, selecting **Columns**, and then selecting this column.
 
-The Telemetry API provides the current routers. If a router is removed or no longer present in the API response, the connector will retain it in the table for up to one day to ensure data continuity. When the **Info Logging Level** of the element log file is raised to *Level 1* or higher, you will see a line in the log file when one or more routers are still in the table but were not returned by the API.
-
-Routers that are no longer returned by the API for more than one day will be removed from the table. This action can also be logged in the element log file. The **Timestamp** column is used to determine the latest timestamp of when a row was updated.
+When the **Info Logging Level** of the element log file is raised to *Level 1* or higher, you will see a line in the log file when one or more routers are still in the table but were not returned by the API.
 
 ### IP Allocations Page
 
@@ -89,22 +89,6 @@ The **IP Allocation Device ID** column in the IP Allocations table is hidden by 
 ### Services Page
 
 The rows in the **Services** table represent the active service plans of the accounts.
-
-#### Creating Service Groups
-
-Setting a new group name in the **Group Name** column creates a new service group in the **Service Group DVEs** table, located on the **Service Group DVEs Configurations** page. Once the group is created, the service and all linked user terminals are assigned to that group.
-
-#### Assigning and Unassigning Services
-
-Selecting an existing group name assigns the service and all linked user terminals to that group.
-
-Selecting the **Unassign** group name unassigns the service and all linked user terminals from their current group. Unassigning a service from a group clears the value in the Service table columns Group Name and Group DVE ID and in the User Terminal table column Service Group DVE ID.
-
-#### Service Group Mode
-
-If the **Service Group Mode** parameter, located on the **Configuration** page, is set to *Account Groups*, it is not possible to unassign services or to re-assign services to a different service group. It is also not possible to use the Service Group DVEs table **Delete** column to delete a service group.
-
-Switching the Service Group Mode to *Custom Groups* allows the unassigning of services, re-assigning of services to a different service group, and deleting of service groups.
 
 #### Hidden/Empty Columns
 
@@ -122,7 +106,7 @@ If you need to purchase additional data beyond the included monthly allocation, 
 
 To do so, specify the number of data blocks you want to top up for a specific account in the **Data Blocks to Add** column of the Services table, and then click the **Top Up** button in the row. This will execute a one-time top-up request via the Starlink Management API. The connector will validate the product availability and confirm whether the top-up succeeded or failed.
 
-Because the Starlink Enterprise element relies on a Starlink Enterprise Account element to send the Opt In/Out request to the Starlink API, it may take a minute or two for the **Automatic Top Up** toggle button to update after it is used. This is due to the [buffer mechanism](#initialization) that was added to allow inter-element communication. Please keep these background actions in mind when toggling that button.
+Because the Starlink Enterprise element relies on a Starlink Enterprise Account element to send the Opt In/Out request to the Starlink API, it may take a minute or two for the **Automatic Top Up** toggle button to update after it is used. This is due to the buffer mechanism that was added to allow inter-element communication. Please keep these background actions in mind when toggling that button.
 
 ### Overage Lines Page
 
@@ -132,14 +116,12 @@ The **Service Line Number** column in the Overage Lines table is hidden by defau
 
 ### Monthly Data Usage Page
 
-On this page, you can review and monitor your data usage per month by type of data consumed (*Fixed* or *Mobile*, *Priority* or *Standard*).
+On this page, you can review and monitor your data usage per month by type of data consumed.
 
-The columns **Priority Data**, **Standard Data**, and **Service Line Number** in the **Monthly Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
-
-The data in the Monthly Data Usage table is retained for 12 months.
+The columns **Priority Data**, **Standard Data** and **Service Line Number** in the **Monthly Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
 
 ### Daily Data Usage Page
 
-On this page, you can review and monitor your data usage per day by type of data consumed (*Fixed* or *Mobile*, *Priority* or *Standard*).
+On this page, you can review and monitor your data usage per day by type of data consumed.
 
 The columns **Priority Data**, **Standard Data** and **Service Line Number** in the **Daily Data Usage** table are hidden by default. You can show them by right-clicking the table column header, selecting **Columns**, and then selecting the columns you want to show.
